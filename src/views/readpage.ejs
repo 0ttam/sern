@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <title>Show page</title>
+</head>
+<body>
+    <div class="container">
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Email</th>
+                <th scope="col">Password</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Address</th>
+                <th scope="col">Phone Number</th>
+                <th scope="col">Gender</th>
+                <th scope="col">RoleId</th>
+                <th scope="col">PositionId</th>
+                <th scope="col">Link image</th>
+                <th scope="col">CreatedAt</th>
+                <th scope="col">UpdatedAt</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% for(let i=0; i<data.length; i++) {%>
+                <tr>
+                <th scope="row"><%= data[i].id%></th>
+                <td><%= data[i].email%></td>
+                <td><%= data[i].password%></td>
+                <td><%= data[i].firstName%></td>
+                <td><%= data[i].lastName%></td>
+                <td><%= data[i].address%></td>
+                <td><%= data[i].phoneNumber%></td>
+                <td><%= data[i].gender%></td>
+                <td><%= data[i].roleId%></td>
+                <td><%= data[i].positionId%></td>
+                <td><%= data[i].image%></td>
+                <td><%= data[i].createdAt%></td>
+                <td><%= data[i].updatedAt%></td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+    </div>
+</body>
+</html>

@@ -17,6 +17,15 @@ let getCreate = async (req, res) => {
     console.log(error);
   }
 };
+let getRead = async (req, res) => {
+  try {
+    let data = await CRUDService.showGetAllUsers();   
+    return res.render("readpage.ejs", { data: data });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 let postUser = async (req, res) => {
   try {
     let message = await CRUDService.createNewUser(req.body);
@@ -30,4 +39,5 @@ module.exports = {
   getHomePage: getHomePage,
   getCreate: getCreate,
   postUser: postUser,
+  getRead: getRead,
 };
