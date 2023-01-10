@@ -7,7 +7,9 @@ let initAppRouter = (app) => {
     router.get("/", homeController.getHomePage);
     router.get("/create", homeController.getCreate);
     router.get("/read-page", homeController.getRead);
-    router.post("/create-user", homeController.postUser); 
+    router.get("/edit", homeController.getEdit);
+    router.post("/create-user", homeController.postUser);
+    router.post("/update-user", homeController.postUpdateUser);
     return app.use("/", router);
 }
 
