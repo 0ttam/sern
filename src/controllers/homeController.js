@@ -57,6 +57,16 @@ let postUpdateUser = async (req, res) => {
     console.log(error);
   }
 };
+let getDelete = async (req, res) => {
+  try {
+    let userId = req.query.id;
+    await CRUDService.deleteUserById(userId);
+    let data = await db.User.findAll();
+    return res.render("homepage", { data: data });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 module.exports = {
   getHomePage: getHomePage,
@@ -65,4 +75,5 @@ module.exports = {
   getRead: getRead,
   getEdit: getEdit,
   postUpdateUser: postUpdateUser,
+  getDelete: getDelete,
 };
