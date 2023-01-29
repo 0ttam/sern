@@ -14,6 +14,7 @@ let initAppRouter = (app) => {
     router.post('/update-user', homeController.postUpdateUser);
     
     router.post('/api/login', userController.handleLogin);
+    router.get('/api/get-all-user', userController.handleGetAllUsers);
     return app.use('/', router);
 };
 
