@@ -66,14 +66,14 @@ const getAllUsers = (userId) => {
             let users = '';
             if (userId === 'ALL') {
                 users = await db.User.findAll({
-                    attributes: { exclude: ['password'] },
                     raw: true,
+                    attributes: { exclude: ['password'] },
                 });
             } else if (userId !== 'ALL' && userId) {
                 users = await db.User.findOne({
+                    raw: true,
                     where: { id: userId },
                     attributes: { exclude: ['password'] },
-                    raw: true,
                 });
             }
             resolve(users);

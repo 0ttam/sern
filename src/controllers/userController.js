@@ -17,8 +17,14 @@ const handleLogin = async (req, res) => {
     });
 };
 const handleGetAllUsers = async (req, res) => {
-    let id = req.body.type; // ALL, id
-    let users = await userService.getAllUsers(id);
+    let userId = req.query.id; // ALL, id
+    if (!userId) {
+        return res.status(500).json({
+            errCode: 1,
+            errMessage: 'Missing inputs parameter!',
+        });
+    }
+    let users = await userService.getAllUsers(userId);
     return res.status(200).json({
         errCode: 0,
         errMessage: 'Ok',
