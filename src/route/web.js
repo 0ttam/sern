@@ -12,9 +12,13 @@ let initAppRouter = (app) => {
     router.get('/delete', homeController.getDelete);
     router.post('/create-user', homeController.postUser);
     router.post('/update-user', homeController.postUpdateUser);
-    
+
     router.post('/api/login', userController.handleLogin);
+    router.post('/api/create-new-user', userController.handleCreateNewUser);
     router.get('/api/get-all-users', userController.handleGetAllUsers);
+    router.delete('/api/delete-user', userController.handleDeleteUser);
+    router.put('/api/edit-user', userController.handleEditUser);
+
     return app.use('/', router);
 };
 

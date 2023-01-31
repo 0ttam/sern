@@ -1,6 +1,8 @@
 import db from '../models/index';
 import bcrypt from 'bcryptjs';
 
+const salt = bcrypt.genSaltSync(10);
+
 let handleUserLogin = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -60,7 +62,7 @@ let checkUserEmail = (email) => {
         }
     });
 };
-const getAllUsers = (userId) => {
+let getAllUsers = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let users = '';
@@ -82,8 +84,136 @@ const getAllUsers = (userId) => {
         }
     });
 };
+let createNewUser = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            //check email is exist
+            let check = await checkUserEmail(data.email);
+            if (check === true) {
+                resolve({
+                    errCode: 1,
+                    errMessage:
+                        'Your email is already in used. Plz try another email!',
+                });
+            }
+            //check email found
+            if (data.email) {
+                let hasPasswordFromBcrypt = await hashUserPassword(
+                    data.password
+                );
+                await db.User.create({
+                    email: data.email,
+                    password: hasPasswordFromBcrypt,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    address: data.address,
+                    phoneNumber: data.phoneNumber,
+                    gender: data.gender === '1' ? true : false,
+                    image: data.image,
+                    roleId: data.roleId,
+                    positionId: data.positionId,
+                });
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Ok',
+                });
+            } else if (!data.email) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Email not yet entered',
+                });
+            }
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+let hashUserPassword = (password) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let hashPassword = await bcrypt.hashSync(password, salt);
+            resolve(hashPassword);
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+let deleteUser = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await db.User.destroy({ where: { id: id } });
+            if (!user) {
+                resolve({
+                    errCode: 2,
+                    errMessage: `The user isn't exist!`,
+                });
+            }
+            resolve({
+                errCode: 0,
+                errMessage: 'Delete user successfully!',
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+let editUser = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // check id
+            if (!data.id) {
+                resolve({
+                    errCode: 1,
+                    errMessage:
+                        `Missing required parameter ('id' field is empty)!`,
+                });
+            }
+            // check password
+            if (data.password) {
+                let hasPasswordFromBcrypt = await hashUserPassword(
+                    data.password
+                );
+            }
+            // find user by id
+            let user = await db.User.findOne({
+                where: { id: data.id },
+                raw: false,
+            });
+            // check user is exist
+            if (user) {
+                user.id = data.id;
+                user.email = data.email;
+                user.password = data.password;
+                user.firstName = data.firstName;
+                user.lastName = data.lastName;
+                user.phoneNumber = data.phoneNumber;
+                user.address = data.address;
+                user.gender = data.gender;
+                user.roleId = data.roleId;
+                user.positionId = data.positionId;
+                user.image = data.image;
+
+                await user.save();
+            }else {
+                resolve({
+                    errCode: 2,
+                    errMessage: 'User is not found!',
+                });
+            }
+            resolve({
+                errCode: 0,
+                errMessage: 'Created a new user successfully!',
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
 
 module.exports = {
     handleUserLogin: handleUserLogin,
     getAllUsers: getAllUsers,
+    createNewUser: createNewUser,
+    deleteUser: deleteUser,
+    editUser: editUser,
 };
