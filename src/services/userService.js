@@ -95,33 +95,34 @@ let createNewUser = (data) => {
                     errMessage:
                         'Your email is already in used. Plz try another email!',
                 });
-            }
-            //check email found
-            if (data.email) {
-                let hasPasswordFromBcrypt = await hashUserPassword(
-                    data.password
-                );
-                await db.User.create({
-                    email: data.email,
-                    password: hasPasswordFromBcrypt,
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    address: data.address,
-                    phoneNumber: data.phoneNumber,
-                    gender: data.gender === '1' ? true : false,
-                    image: data.image,
-                    roleId: data.roleId,
-                    positionId: data.positionId,
-                });
-                resolve({
-                    errCode: 0,
-                    errMessage: 'Ok',
-                });
-            } else if (!data.email) {
-                resolve({
-                    errCode: 1,
-                    errMessage: 'Email not yet entered',
-                });
+            } else {
+                //check email found
+                if (data.email) {
+                    let hasPasswordFromBcrypt = await hashUserPassword(
+                        data.password
+                    );
+                    await db.User.create({
+                        email: data.email,
+                        password: hasPasswordFromBcrypt,
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        address: data.address,
+                        phoneNumber: data.phoneNumber,
+                        gender: data.gender === '1' ? true : false,
+                        image: data.image,
+                        roleId: data.roleId,
+                        positionId: data.positionId,
+                    });
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'Ok',
+                    });
+                } else if (!data.email) {
+                    resolve({
+                        errCode: 1,
+                        errMessage: 'Email not yet entered',
+                    });
+                }
             }
         } catch (error) {
             reject(error);
@@ -160,19 +161,17 @@ let deleteUser = (id) => {
 let editUser = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            let hasPasswordFromBcrypt = '';
             // check id
             if (!data.id) {
                 resolve({
                     errCode: 1,
-                    errMessage:
-                        `Missing required parameter ('id' field is empty)!`,
+                    errMessage: `Missing required parameter ('id' field is empty)!`,
                 });
             }
             // check password
             if (data.password) {
-                let hasPasswordFromBcrypt = await hashUserPassword(
-                    data.password
-                );
+                hasPasswordFromBcrypt = await hashUserPassword(data.password);
             }
             // find user by id
             let user = await db.User.findOne({
@@ -183,7 +182,7 @@ let editUser = (data) => {
             if (user) {
                 user.id = data.id;
                 user.email = data.email;
-                user.password = data.password;
+                user.password = hasPasswordFromBcrypt;
                 user.firstName = data.firstName;
                 user.lastName = data.lastName;
                 user.phoneNumber = data.phoneNumber;
@@ -194,7 +193,7 @@ let editUser = (data) => {
                 user.image = data.image;
 
                 await user.save();
-            }else {
+            } else {
                 resolve({
                     errCode: 2,
                     errMessage: 'User is not found!',
