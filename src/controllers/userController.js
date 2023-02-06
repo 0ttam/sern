@@ -36,26 +36,27 @@ const handleCreateNewUser = async (req, res) => {
     return res.status(200).json(message);
 };
 const handleDeleteUser = async (req, res) => {
-    if (!req.body.id) {
+    if (!req.query.id) {
         return res.status(200).json({
             errCode: 1,
             errMessage: 'Missing required parameter!',
         });
     }
-    let message = await userService.deleteUser(req.body.id);
+    console.log(req.query.id);
+    let message = await userService.deleteUser(req.query.id);
     return res.status(200).json(message);
 };
 const handleEditUser = async (req, res) => {
     let data = req.body;
-    if(!data) {
+    if (!data) {
         return res.status(200).json({
             errCode: 1,
             errMessage: 'Missing required parameter!',
-        })
+        });
     }
     let message = await userService.editUser(data);
     return res.status(200).json(message);
-}
+};
 
 module.exports = {
     handleLogin: handleLogin,
