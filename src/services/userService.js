@@ -169,10 +169,6 @@ let editUser = (data) => {
                     errMessage: `Missing required parameter ('id' field is empty)!`,
                 });
             }
-            // check password
-            if (data.password) {
-                hasPasswordFromBcrypt = await hashUserPassword(data.password);
-            }
             // find user by id
             let user = await db.User.findOne({
                 where: { id: data.id },
@@ -182,7 +178,6 @@ let editUser = (data) => {
             if (user) {
                 user.id = data.id;
                 user.email = data.email;
-                user.password = hasPasswordFromBcrypt;
                 user.firstName = data.firstName;
                 user.lastName = data.lastName;
                 user.phoneNumber = data.phoneNumber;

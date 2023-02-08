@@ -42,7 +42,6 @@ const handleDeleteUser = async (req, res) => {
             errMessage: 'Missing required parameter!',
         });
     }
-    console.log(req.query.id);
     let message = await userService.deleteUser(req.query.id);
     return res.status(200).json(message);
 };

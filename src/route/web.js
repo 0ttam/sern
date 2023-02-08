@@ -18,6 +18,7 @@ let initAppRouter = (app) => {
     router.get('/api/get-all-users', userController.handleGetAllUsers);
     router.delete('/api/delete-user', userController.handleDeleteUser);
     router.put('/api/edit-user', userController.handleEditUser);
+    
 
     return app.use('/', router);
 };
