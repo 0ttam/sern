@@ -191,7 +191,9 @@ let editUser = (data) => {
                 user.gender = data.gender;
                 user.roleId = data.roleId;
                 user.positionId = data.positionId;
-                user.avatar = data.avatar;
+                if (data.avatar) {
+                    user.avatar = data.avatar;
+                }
 
                 await user.save();
             } else {
