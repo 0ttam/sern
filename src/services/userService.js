@@ -233,6 +233,45 @@ let getAllCodeService = (typeInput) => {
         }
     });
 };
+let getTopDoctorHomeService = (limitInput) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!limitInput) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing require parameters!',
+                });
+            } else {
+                let res = {};
+                let topDoctor = await db.User.findAll({
+                    raw: true,
+                    nest: true,
+                    where: { roleId: 'R2' },
+                    attributes: { exclude: ['password'] },
+                    limit: limitInput,
+                    order: [['createdAt', 'DESC']],
+                    include: [
+                        {
+                            model: db.Allcode,
+                            as: 'positionData',
+                            attributes: ['valueEn', 'valueVi'],
+                        },
+                        {
+                            model: db.Allcode,
+                            as: 'genderData',
+                            attributes: ['valueEn', 'valueVi'],
+                        },
+                    ],
+                });
+                res.errCode = 0;
+                res.topDoctor = topDoctor;
+                resolve(res);
+            }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
 
 module.exports = {
     handleUserLogin: handleUserLogin,
@@ -241,4 +280,5 @@ module.exports = {
     deleteUser: deleteUser,
     editUser: editUser,
     getAllCodeService: getAllCodeService,
+    getTopDoctorHomeService: getTopDoctorHomeService,
 };
