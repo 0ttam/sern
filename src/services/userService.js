@@ -263,12 +263,79 @@ let getTopDoctorHomeService = (limitInput) => {
                         },
                     ],
                 });
+
                 res.errCode = 0;
                 res.topDoctor = topDoctor;
                 resolve(res);
             }
         } catch (e) {
             reject(e);
+        }
+    });
+};
+
+let getAllDoctorService = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let res = {};
+            let allDoctor = await db.User.findAll({
+                raw: true,
+                nest: true,
+                where: { roleId: 'R2' },
+                attributes: { exclude: ['password', 'avatar'] },
+                order: [['createdAt', 'DESC']],
+                include: [
+                    {
+                        model: db.Allcode,
+                        as: 'positionData',
+                        attributes: ['valueEn', 'valueVi'],
+                    },
+                    {
+                        model: db.Allcode,
+                        as: 'genderData',
+                        attributes: ['valueEn', 'valueVi'],
+                    },
+                ],
+            });
+
+            res.errCode = 0;
+            res.allDoctor = allDoctor;
+            resolve(res);
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+let postInfoDoctorService = (inputData) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (
+                !inputData.id ||
+                !inputData.contentHTML ||
+                !inputData.contentMarkdown
+            ) {
+                resolve({
+                    errCode: -1,
+                    errMessage: 'Missing parameter!',
+                });
+            } else {
+                await db.Markdown.create({
+                    contentHTML: inputData.contentHTML,
+                    contentMarkdown: inputData.contentMarkdown,
+                    description: inputData.description,
+                    doctorId: inputData.id,
+                });
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Add info doctor successfully!',
+                });
+            }
+        } catch (e) {
+            console.log(e);
+            resolve({
+                errCode: -1,
+                errMessage: 'Missing parameter!',
+            });
         }
     });
 };
@@ -281,4 +348,6 @@ module.exports = {
     editUser: editUser,
     getAllCodeService: getAllCodeService,
     getTopDoctorHomeService: getTopDoctorHomeService,
+    getAllDoctorService: getAllDoctorService,
+    postInfoDoctorService: postInfoDoctorService,
 };
