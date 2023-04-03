@@ -339,6 +339,51 @@ let postInfoDoctorService = (inputData) => {
         }
     });
 };
+let getDetailDoctorService = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!id) {
+                resolve({
+                    errCode: -1,
+                    errMessage: 'Missing parameter!',
+                });
+            } else {
+                let data = await db.User.findOne({
+                    where: { id: id },
+                    attributes: { exclude: ['password', 'avatar'] },
+                    include: [
+                        {
+                            model: db.Markdown,
+                            attributes: [
+                                'description',
+                                'contentMarkdown',
+                                'contentHTML',
+                            ],
+                        },
+                        {
+                            model: db.Allcode,
+                            as: 'positionData',
+                            attributes: ['valueEn', 'valueVi'],
+                        },
+                    ],
+                    raw: true,
+                    nest: true,
+                });
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Add info doctor successfully!',
+                    data: data,
+                });
+            }
+        } catch (e) {
+            console.log(e);
+            resolve({
+                errCode: -1,
+                errMessage: 'Missing parameter!',
+            });
+        }
+    });
+};
 
 module.exports = {
     handleUserLogin: handleUserLogin,
@@ -350,4 +395,5 @@ module.exports = {
     getTopDoctorHomeService: getTopDoctorHomeService,
     getAllDoctorService: getAllDoctorService,
     postInfoDoctorService: postInfoDoctorService,
+    getDetailDoctorService: getDetailDoctorService,
 };

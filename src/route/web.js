@@ -19,11 +19,12 @@ let initAppRouter = (app) => {
     router.get('/api/get-all-users', userController.handleGetAllUsers);
     router.delete('/api/delete-user', userController.handleDeleteUser);
     router.put('/api/edit-user', userController.handleEditUser);
-
     router.get('/api/all-code', userController.getAllCode);
+
     router.get('/api/top-doctor-home', doctorController.getTopDoctorHome);
     router.get('/api/get-all-doctor', doctorController.getAllDoctor);
     router.post('/api/post-info-doctor', doctorController.postInfoDoctor);
+    router.get('/api/get-detail-doctor', doctorController.getDetailDoctor);
 
     return app.use('/', router);
 };
