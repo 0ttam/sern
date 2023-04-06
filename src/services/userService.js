@@ -350,7 +350,7 @@ let getDetailDoctorService = (id) => {
             } else {
                 let data = await db.User.findOne({
                     where: { id: id },
-                    attributes: { exclude: ['password', 'avatar'] },
+                    attributes: { exclude: ['password'] },
                     include: [
                         {
                             model: db.Markdown,
@@ -366,9 +366,14 @@ let getDetailDoctorService = (id) => {
                             attributes: ['valueEn', 'valueVi'],
                         },
                     ],
-                    raw: true,
+                    raw: false,
                     nest: true,
                 });
+                if (data && data.avatar) {
+                    data.avatar = new Buffer(data.avatar, 'base64').toString(
+                        'binary'
+                    );
+                }
                 resolve({
                     errCode: 0,
                     errMessage: 'Add info doctor successfully!',
