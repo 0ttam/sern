@@ -58,10 +58,23 @@ const getDetailDoctor = async (req, res) => {
         });
     }
 };
+const updateDetailInfoDoctor = async (req, res) => {
+    try {
+        let response = await userService.updateDetailInfoDoctorService(req.body);
+        return res.status(200).json(response);
+    } catch (e) {
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server...',
+        });
+    }
+};
 
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctor: getAllDoctor,
     postInfoDoctor: postInfoDoctor,
     getDetailDoctor: getDetailDoctor,
+    updateDetailInfoDoctor: updateDetailInfoDoctor,
 };

@@ -25,6 +25,7 @@ let initAppRouter = (app) => {
     router.get('/api/get-all-doctor', doctorController.getAllDoctor);
     router.post('/api/post-info-doctor', doctorController.postInfoDoctor);
     router.get('/api/get-detail-doctor', doctorController.getDetailDoctor);
+    router.put('/api/put-info-doctor', doctorController.updateDetailInfoDoctor);
 
     return app.use('/', router);
 };

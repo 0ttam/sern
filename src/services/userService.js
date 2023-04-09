@@ -374,10 +374,59 @@ let getDetailDoctorService = (id) => {
                         'binary'
                     );
                 }
+                if (!data) {
+                    data = {};
+                }
                 resolve({
                     errCode: 0,
                     errMessage: 'Add info doctor successfully!',
                     data: data,
+                });
+            }
+        } catch (e) {
+            console.log(e);
+            resolve({
+                errCode: -1,
+                errMessage: 'Missing parameter!',
+            });
+        }
+    });
+};
+let updateDetailInfoDoctorService = (inputData) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (
+                !inputData.id ||
+                !inputData.contentHTML ||
+                !inputData.contentMarkdown ||
+                !inputData.description
+            ) {
+                resolve({
+                    errCode: -1,
+                    errMessage: 'Missing parameter!',
+                });
+            } else {
+                // find user by id
+                let doctorMarkdown = await db.Markdown.findOne({
+                    where: { doctorId: inputData.id },
+                    raw: false,
+                });
+                // check user is exist
+                if (doctorMarkdown) {
+                    doctorMarkdown.contentHTML = inputData.contentHTML;
+                    doctorMarkdown.contentMarkdown = inputData.contentMarkdown;
+                    doctorMarkdown.description = inputData.description;
+
+                    await doctorMarkdown.save();
+                } else {
+                    resolve({
+                        errCode: 2,
+                        errMessage: 'User is not found!',
+                    });
+                }
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Created a new user successfully!',
                 });
             }
         } catch (e) {
@@ -401,4 +450,5 @@ module.exports = {
     getAllDoctorService: getAllDoctorService,
     postInfoDoctorService: postInfoDoctorService,
     getDetailDoctorService: getDetailDoctorService,
+    updateDetailInfoDoctorService: updateDetailInfoDoctorService,
 };
