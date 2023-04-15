@@ -1,4 +1,5 @@
 import userService from '../services/userService';
+import doctorService from '../services/doctorService';
 
 const getTopDoctorHome = async (req, res) => {
     let limit = req.query.limit;
@@ -60,10 +61,24 @@ const getDetailDoctor = async (req, res) => {
 };
 const updateDetailInfoDoctor = async (req, res) => {
     try {
-        let response = await userService.updateDetailInfoDoctorService(req.body);
+        let response = await userService.updateDetailInfoDoctorService(
+            req.body
+        );
         return res.status(200).json(response);
     } catch (e) {
         console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server...',
+        });
+    }
+};
+const bulkCreateSchedule = async (req, res) => {
+    try {
+        let info = await doctorService.bulkCreateSchedule(req.body);
+        return res.status(200).json(info);
+    } catch (error) {
+        console.log(error);
         return res.status(200).json({
             errCode: -1,
             errMessage: 'Error from server...',
@@ -77,4 +92,5 @@ module.exports = {
     postInfoDoctor: postInfoDoctor,
     getDetailDoctor: getDetailDoctor,
     updateDetailInfoDoctor: updateDetailInfoDoctor,
+    bulkCreateSchedule: bulkCreateSchedule,
 };

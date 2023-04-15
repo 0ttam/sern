@@ -27,6 +27,8 @@ let initAppRouter = (app) => {
     router.get('/api/get-detail-doctor', doctorController.getDetailDoctor);
     router.put('/api/put-info-doctor', doctorController.updateDetailInfoDoctor);
 
+    router.post('/api/bulk-create-schedule', doctorController.bulkCreateSchedule);
+
     return app.use('/', router);
 };
 
