@@ -309,10 +309,34 @@ let getAllDoctorService = () => {
 let postInfoDoctorService = (inputData) => {
     return new Promise(async (resolve, reject) => {
         try {
+            // if (
+            //     !inputData.id ||
+            //     !inputData.contentHTML ||
+            //     !inputData.contentMarkdown
+            // ) {
+            //     resolve({
+            //         errCode: -1,
+            //         errMessage: 'Missing parameter!',
+            //     });
+            // } else {
+            //     await db.Markdown.create({
+            //         contentHTML: inputData.contentHTML,
+            //         contentMarkdown: inputData.contentMarkdown,
+            //         description: inputData.description,
+            //         doctorId: inputData.id,
+            //     });
+            //     resolve({
+            //         errCode: 0,
+            //         errMessage: 'Add info doctor successfully!',
+            //     });
+            // }
             if (
                 !inputData.id ||
                 !inputData.contentHTML ||
-                !inputData.contentMarkdown
+                !inputData.contentMarkdown ||
+                !inputData.priceId ||
+                !inputData.provinceId ||
+                !inputData.paymentId
             ) {
                 resolve({
                     errCode: -1,
@@ -324,6 +348,15 @@ let postInfoDoctorService = (inputData) => {
                     contentMarkdown: inputData.contentMarkdown,
                     description: inputData.description,
                     doctorId: inputData.id,
+                });
+                await db.Doctor_Info.create({
+                    doctorId: inputData.id,
+                    priceId: inputData.priceId,
+                    provinceId: inputData.provinceId,
+                    paymentId: inputData.paymentId,
+                    addressClinic: inputData.addressClinic,
+                    nameClinic: inputData.nameClinic,
+                    note: inputData.note,
                 });
                 resolve({
                     errCode: 0,
@@ -399,7 +432,12 @@ let updateDetailInfoDoctorService = (inputData) => {
                 !inputData.id ||
                 !inputData.contentHTML ||
                 !inputData.contentMarkdown ||
-                !inputData.description
+                !inputData.description ||
+                !inputData.priceId ||
+                !inputData.provinceId ||
+                !inputData.paymentId ||
+                !inputData.nameClinic ||
+                !inputData.addressClinic
             ) {
                 resolve({
                     errCode: -1,
@@ -418,10 +456,35 @@ let updateDetailInfoDoctorService = (inputData) => {
                     doctorMarkdown.description = inputData.description;
 
                     await doctorMarkdown.save();
+                    let doctorInfo = await db.Doctor_Info.findOne({
+                        where: { doctorId: inputData.id },
+                        raw: false,
+                    });
+                    if (doctorInfo) {
+                        doctorInfo.doctorId = inputData.id;
+                        doctorInfo.priceId = inputData.priceId;
+                        doctorInfo.provinceId = inputData.provinceId;
+                        doctorInfo.paymentId = inputData.paymentId;
+                        doctorInfo.addressClinic = inputData.addressClinic;
+                        doctorInfo.nameClinic = inputData.nameClinic;
+                        doctorInfo.note = inputData.note;
+
+                        await doctorInfo.save();
+                    } else {
+                        await db.Doctor_Info.create({
+                            doctorId: inputData.id,
+                            priceId: inputData.priceId,
+                            provinceId: inputData.provinceId,
+                            paymentId: inputData.paymentId,
+                            addressClinic: inputData.addressClinic,
+                            nameClinic: inputData.nameClinic,
+                            note: inputData.note,
+                        });
+                    }
                 } else {
                     resolve({
                         errCode: 2,
-                        errMessage: 'User is not found!',
+                        errMessage: 'Doctor markdown is not found!',
                     });
                 }
                 resolve({
