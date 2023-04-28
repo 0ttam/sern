@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
                 targetKey: 'keyMap',
                 as: 'genderData',
             });
-            User.hasOne(models.Markdown, {foreignKey: 'doctorId'})
+            User.hasOne(models.Markdown, {foreignKey: 'doctorId'});
+            User.hasOne(models.Doctor_Info, {foreignKey: 'doctorId'});
         }
     }
     User.init(
