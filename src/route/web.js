@@ -32,6 +32,8 @@ let initAppRouter = (app) => {
         doctorController.bulkCreateSchedule
     );
     router.get('/api/get-schedule-by-date', doctorController.getScheduleByDate);
+    router.get('/api/get-doctor-extra-info-by-id', doctorController.getDoctorExtraInfoById);
+
 
     return app.use('/', router);
 };
