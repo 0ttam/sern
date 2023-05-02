@@ -123,8 +123,124 @@ let getDoctorExtraInfoById = (doctorId) => {
         }
     });
 };
+let getProfileDoctorById = (doctorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId) {
+                resolve({
+                    errCode: -1,
+                    errMessage: 'Missing require parameter...',
+                });
+            } else {
+                let dataProfileDoctorById = await db.User.findOne({
+                    where: {
+                        id: doctorId,
+                    },
+                    attributes: { exclude: ['password'] },
+                    include: [
+                        {
+                            model: db.Allcode,
+                            as: 'positionData',
+                            attributes: ['valueEn', 'valueVi'],
+                        },
+                        {
+                            model: db.Markdown,
+                            attributes: {
+                                exclude: ['id', 'doctorId'],
+                            },
+                        },
+                        {
+                            model: db.Doctor_Info,
+                            attributes: {
+                                exclude: ['id', 'doctorId'],
+                            },
+                            include: [
+                                {
+                                    model: db.Allcode,
+                                    as: 'priceTypeData',
+                                    attributes: ['valueEn', 'valueVi'],
+                                },
+                                {
+                                    model: db.Allcode,
+                                    as: 'provinceTypeData',
+                                    attributes: ['valueEn', 'valueVi'],
+                                },
+                                {
+                                    model: db.Allcode,
+                                    as: 'paymentTypeData',
+                                    attributes: ['valueEn', 'valueVi'],
+                                },
+                            ],
+                        },
+                    ],
+                    raw: false,
+                    nest: true,
+                });
+                if (dataProfileDoctorById && dataProfileDoctorById.avatar) {
+                    dataProfileDoctorById.avatar = Buffer.from(
+                        dataProfileDoctorById.avatar,
+                        'base64'
+                    ).toString('binary');
+                }
+                if (!dataProfileDoctorById) dataProfileDoctorById = {};
+                resolve({
+                    errCode: 0,
+                    data: dataProfileDoctorById,
+                });
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    });
+};
+
+let getExaminationPriceById = (doctorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId) {
+                resolve({
+                    errCode: -1,
+                    errMessage: 'Missing require parameter...',
+                });
+            } else {
+                let dataExaminationPriceById = await db.User.findOne({
+                    where: {
+                        id: doctorId,
+                    },
+                    attributes: { exclude: ['password', 'avatar'] },
+                    include: [
+                        {
+                            model: db.Doctor_Info,
+                            attributes: {
+                                exclude: ['id', 'doctorId'],
+                            },
+                            include: [
+                                {
+                                    model: db.Allcode,
+                                    as: 'priceTypeData',
+                                    attributes: ['valueEn', 'valueVi'],
+                                },
+                            ],
+                        },
+                    ],
+                    raw: false,
+                    nest: true,
+                });
+                if (!dataExaminationPriceById) dataExaminationPriceById = {};
+                resolve({
+                    errCode: 0,
+                    data: dataExaminationPriceById,
+                });
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    });
+};
 module.exports = {
     bulkCreateSchedule,
     getScheduleByDate,
     getDoctorExtraInfoById,
+    getProfileDoctorById,
+    getExaminationPriceById,
 };
