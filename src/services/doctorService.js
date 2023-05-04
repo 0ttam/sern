@@ -237,6 +237,8 @@ let getExaminationPriceById = (doctorId) => {
         }
     });
 };
+
+
 module.exports = {
     bulkCreateSchedule,
     getScheduleByDate,

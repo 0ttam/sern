@@ -141,6 +141,7 @@ const getExaminationPriceById = async (req, res) => {
     }
 };
 
+
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctor: getAllDoctor,
