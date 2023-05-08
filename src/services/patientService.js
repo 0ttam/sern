@@ -3,6 +3,9 @@ require('dotenv').config;
 import _ from 'lodash';
 import bcrypt from 'bcryptjs';
 const salt = bcrypt.genSaltSync(10);
+import emailServer from './emailService';
+import { v4 as uuidv4 } from 'uuid';
+import { log } from 'console';
 
 let handelBookAppointment = (data) => {
     return new Promise(async (resolve, reject) => {
@@ -51,9 +54,9 @@ let handelBookAppointment = (data) => {
                         phoneNumber: data.phoneNumber,
                     },
                 });
-                console.log('check user:', user[0]);
                 // Create a booking record
                 if (user && user[0]) {
+                    let token = uuidv4();
                     await db.Booking.findOrCreate({
                         where: { patientId: user[0].id },
                         defaults: {
@@ -63,7 +66,19 @@ let handelBookAppointment = (data) => {
                             date: data.date,
                             timeType: data.timeType,
                             reason: data.reason,
+                            token: token,
                         },
+                    });
+                    await emailServer.senSimpleEmail({
+                        email: data.email,
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        firstNameDoctor: data.firstNameDoctor,
+                        lastNameDoctor: data.lastNameDoctor,
+                        timeDisplay: data.timeDisplay,
+                        dayDisplay: data.dayDisplay,
+                        languages: data.languages,
+                        linkRedirect: buildUrlEmail(data.doctorId, token),
                     });
                     resolve({
                         data: user,
@@ -77,7 +92,46 @@ let handelBookAppointment = (data) => {
         }
     });
 };
-
+let buildUrlEmail = (doctorId, token) => {
+    let result = `${process.env.URL_REACT}/api/verify-book-appointment?token=${token}&doctorId=${doctorId}`;
+    return result;
+};
+let handelVerifyBookAppointment = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data || !data.doctorId || !data.token) {
+                resolve({ errCode: 1, errMessage: 'Missing parameter' });
+            } else {
+                let appointment = await db.Booking.findOne({
+                    where: {
+                        doctorId: data.doctorId,
+                        token: data.token,
+                        statusId: 'S1',
+                    },
+                    raw: false,
+                });
+                console.log('appointment....', appointment);
+                if (appointment) {
+                    appointment.statusId = 'S2';
+                    await appointment.save();
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'Appointment confirmed successfully!',
+                    });
+                } else {
+                    resolve({
+                        errCode: 2,
+                        errMessage:
+                            'The user does not exist or the appointment is already booked!',
+                    });
+                }
+            }
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
 module.exports = {
     handelBookAppointment,
+    handelVerifyBookAppointment,
 };
