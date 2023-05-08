@@ -93,7 +93,7 @@ let handelBookAppointment = (data) => {
     });
 };
 let buildUrlEmail = (doctorId, token) => {
-    let result = `${process.env.URL_REACT}/api/verify-book-appointment?token=${token}&doctorId=${doctorId}`;
+    let result = `${process.env.URL_REACT}/verify-book-appointment?token=${token}&doctorId=${doctorId}`;
     return result;
 };
 let handelVerifyBookAppointment = (data) => {
@@ -110,7 +110,6 @@ let handelVerifyBookAppointment = (data) => {
                     },
                     raw: false,
                 });
-                console.log('appointment....', appointment);
                 if (appointment) {
                     appointment.statusId = 'S2';
                     await appointment.save();
