@@ -5,7 +5,6 @@ import bcrypt from 'bcryptjs';
 const salt = bcrypt.genSaltSync(10);
 import emailServer from './emailService';
 import { v4 as uuidv4 } from 'uuid';
-import { log } from 'console';
 
 let handelBookAppointment = (data) => {
     return new Promise(async (resolve, reject) => {
