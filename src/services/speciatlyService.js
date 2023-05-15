@@ -6,7 +6,7 @@ const handelPostCreateNewSpecialty = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (
-                !data.name ||
+                !data.nameVi ||
                 !data.image ||
                 !data.contentMarkdown ||
                 !data.contentHTML
@@ -17,7 +17,7 @@ const handelPostCreateNewSpecialty = (data) => {
                 });
             } else {
                 await db.Specialty.create({
-                    name: data.name,
+                    nameVi: data.nameVi,
                     contentHTML: data.contentHTML,
                     contentMarkdown: data.contentMarkdown,
                     image: data.image,
@@ -85,7 +85,7 @@ let handelEditSpecialtyById = (data) => {
             // check user is exist
             if (specialty) {
                 specialty.id = data.id;
-                specialty.name = data.name;
+                specialty.nameVi = data.nameVi;
                 specialty.contentHTML = data.contentHTML;
                 specialty.contentMarkdown = data.contentMarkdown;
                 if (data.image) {

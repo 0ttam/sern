@@ -336,7 +336,8 @@ let postInfoDoctorService = (inputData) => {
                 !inputData.contentMarkdown ||
                 !inputData.priceId ||
                 !inputData.provinceId ||
-                !inputData.paymentId
+                !inputData.paymentId ||
+                !inputData.specialtyId
             ) {
                 resolve({
                     errCode: -1,
@@ -357,6 +358,7 @@ let postInfoDoctorService = (inputData) => {
                     addressClinic: inputData.addressClinic,
                     nameClinic: inputData.nameClinic,
                     note: inputData.note,
+                    specialtyId: +inputData.specialtyId,
                 });
                 resolve({
                     errCode: 0,
@@ -413,7 +415,8 @@ let getDetailDoctorService = (id) => {
                                     model: db.Allcode,
                                     as: 'provinceTypeData',
                                     attributes: ['valueEn', 'valueVi'],
-                                },{
+                                },
+                                {
                                     model: db.Allcode,
                                     as: 'paymentTypeData',
                                     attributes: ['valueEn', 'valueVi'],
@@ -490,8 +493,8 @@ let updateDetailInfoDoctorService = (inputData) => {
                         doctorInfo.addressClinic = inputData.addressClinic;
                         doctorInfo.nameClinic = inputData.nameClinic;
                         doctorInfo.note = inputData.note;
-
-                        await doctorInfo.save();
+                        (doctorInfo.specialtyId = +inputData.specialtyId),
+                            await doctorInfo.save();
                     } else {
                         await db.Doctor_Info.create({
                             doctorId: inputData.id,
@@ -501,6 +504,7 @@ let updateDetailInfoDoctorService = (inputData) => {
                             addressClinic: inputData.addressClinic,
                             nameClinic: inputData.nameClinic,
                             note: inputData.note,
+                            specialtyId: +inputData.specialtyId,
                         });
                     }
                 } else {
