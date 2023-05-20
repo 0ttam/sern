@@ -40,7 +40,23 @@ const putEditSpecialtyById = async (req, res) => {
 };
 const handleDeleteSpecialty = async (req, res) => {
     try {
-        let info = await specialtyService.handelDeleteSpecialtyById(req.query.id);
+        let info = await specialtyService.handelDeleteSpecialtyById(
+            req.query.id
+        );
+        return res.status(200).json(info);
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server...',
+        });
+    }
+};
+const getListDoctorBySpecialtyId = async (req, res) => {
+    try {
+        let info = await specialtyService.handelGetListDoctorBySpecialtyId(
+            req.query.specialtyId
+        );
         return res.status(200).json(info);
     } catch (error) {
         console.log(error);
@@ -55,4 +71,5 @@ module.exports = {
     getSpecialtyById,
     putEditSpecialtyById,
     handleDeleteSpecialty,
+    getListDoctorBySpecialtyId,
 };

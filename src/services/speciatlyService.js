@@ -45,21 +45,35 @@ const handelGetSpecialtyById = (id) => {
                     let data = await db.Specialty.findAll({
                         raw: true,
                     });
-                    resolve({
-                        errCode: 0,
-                        errMessage: 'Get specialty success!',
-                        data: data,
-                    });
+                    if (!_.isEmpty(data)) {
+                        resolve({
+                            errCode: 0,
+                            errMessage: 'Get specialty success!',
+                            data: data,
+                        });
+                    } else {
+                        resolve({
+                            errCode: -1,
+                            errMessage: `Couldn't find any specialty!`,
+                        });
+                    }
                 } else {
                     let data = await db.Specialty.findOne({
                         where: { id: id },
                         raw: true,
                     });
-                    resolve({
-                        errCode: 0,
-                        errMessage: 'Get specialty success!',
-                        data: data,
-                    });
+                    if (!_.isEmpty(data)) {
+                        resolve({
+                            errCode: 0,
+                            errMessage: 'Get specialty success!',
+                            data: data,
+                        });
+                    } else {
+                        resolve({
+                            errCode: -1,
+                            errMessage: `Couldn't find any specialty!`,
+                        });
+                    }
                 }
             }
         } catch (error) {
@@ -127,9 +141,65 @@ const handelDeleteSpecialtyById = (id) => {
         }
     });
 };
+
+const handelGetListDoctorBySpecialtyId = (specialtyId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!specialtyId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing parameter.....',
+                });
+            } else {
+                let data = await db.Doctor_Info.findAll({
+                    where: { specialtyId: specialtyId },
+                    attributes: ['doctorId', 'specialtyId'],
+                    include: [
+                        {
+                            model: db.User,
+                            attributes: [
+                                'firstName',
+                                'lastName',
+                                'avatar',
+                            ],
+                            include: [
+                                {
+                                    model: db.Markdown,
+                                    attributes: ['description'],
+                                },
+                                {
+                                    model: db.Allcode,
+                                    as: 'positionData',
+                                    attributes: ['valueEn', 'valueVi'],
+                                },
+                            ],
+                        },
+                    ],
+                    raw: true,
+                    nest: true,
+                });
+                if (!_.isEmpty(data)) {
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'Get List doctor by specialtyId success!',
+                        data: data,
+                    });
+                } else {
+                    resolve({
+                        errCode: -1,
+                        errMessage: `Couldn't find any doctor!`,
+                    });
+                }
+            }
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
 module.exports = {
     handelPostCreateNewSpecialty,
     handelGetSpecialtyById,
     handelEditSpecialtyById,
     handelDeleteSpecialtyById,
+    handelGetListDoctorBySpecialtyId,
 };

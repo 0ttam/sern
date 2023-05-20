@@ -70,6 +70,10 @@ let initAppRouter = (app) => {
         '/api/delete-specialty',
         specialtyController.handleDeleteSpecialty
     );
+    router.get(
+        '/api/get-list-doctor-by-specialty-id',
+        specialtyController.getListDoctorBySpecialtyId
+    );
     return app.use('/', router);
 };
 
