@@ -142,43 +142,82 @@ const handelDeleteSpecialtyById = (id) => {
     });
 };
 
-const handelGetListDoctorBySpecialtyId = (specialtyId) => {
+const handelGetListDoctorBySpecialtyAndDetailSpecialtyById = (
+    specialtyId,
+    provinceId
+) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!specialtyId) {
+            if (!specialtyId && !provinceId) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing parameter.....',
                 });
             } else {
-                let data = await db.Doctor_Info.findAll({
-                    where: { specialtyId: specialtyId },
-                    attributes: ['doctorId', 'specialtyId'],
-                    include: [
-                        {
-                            model: db.User,
-                            attributes: [
-                                'firstName',
-                                'lastName',
-                                'avatar',
-                            ],
-                            include: [
-                                {
-                                    model: db.Markdown,
-                                    attributes: ['description'],
-                                },
-                                {
-                                    model: db.Allcode,
-                                    as: 'positionData',
-                                    attributes: ['valueEn', 'valueVi'],
-                                },
-                            ],
+                let data = {};
+                let dataDoctor = {};
+                if (provinceId === 'ALL') {
+                    dataDoctor = await db.Doctor_Info.findAll({
+                        where: { specialtyId: specialtyId },
+                        attributes: ['doctorId', 'specialtyId'],
+                        include: [
+                            {
+                                model: db.User,
+                                attributes: ['firstName', 'lastName', 'avatar'],
+                                include: [
+                                    {
+                                        model: db.Markdown,
+                                        attributes: ['description'],
+                                    },
+                                    {
+                                        model: db.Allcode,
+                                        as: 'positionData',
+                                        attributes: ['valueEn', 'valueVi'],
+                                    },
+                                ],
+                            },
+                        ],
+                        raw: true,
+                        nest: true,
+                    });
+                } else {
+                    dataDoctor = await db.Doctor_Info.findAll({
+                        where: {
+                            specialtyId: specialtyId,
+                            provinceId: provinceId,
                         },
-                    ],
-                    raw: true,
-                    nest: true,
+                        attributes: ['doctorId', 'specialtyId'],
+                        include: [
+                            {
+                                model: db.User,
+                                attributes: ['firstName', 'lastName', 'avatar'],
+                                include: [
+                                    {
+                                        model: db.Markdown,
+                                        attributes: ['description'],
+                                    },
+                                    {
+                                        model: db.Allcode,
+                                        as: 'positionData',
+                                        attributes: ['valueEn', 'valueVi'],
+                                    },
+                                ],
+                            },
+                        ],
+                        raw: true,
+                        nest: true,
+                    });
+                }
+
+                let dataSpecialty = await db.Specialty.findOne({
+                    where: { id: specialtyId },
                 });
-                if (!_.isEmpty(data)) {
+
+                if (!_.isEmpty(dataSpecialty)) {
+                    data = {
+                        dataDoctor: dataDoctor,
+                        dataSpecialty: dataSpecialty,
+                    };
                     resolve({
                         errCode: 0,
                         errMessage: 'Get List doctor by specialtyId success!',
@@ -201,5 +240,5 @@ module.exports = {
     handelGetSpecialtyById,
     handelEditSpecialtyById,
     handelDeleteSpecialtyById,
-    handelGetListDoctorBySpecialtyId,
+    handelGetListDoctorBySpecialtyAndDetailSpecialtyById,
 };

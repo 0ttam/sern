@@ -23,10 +23,7 @@ let handleUserLogin = (email, password) => {
                 });
                 if (user) {
                     //compare password
-                    let check = await bcrypt.compareSync(
-                        password,
-                        user.password
-                    );
+                    let check = bcrypt.compareSync(password, user.password);
                     if (check) {
                         userData.errCode = 0;
                         userData.errMessage = 'Ok';
@@ -261,6 +258,16 @@ let getTopDoctorHomeService = (limitInput) => {
                             as: 'genderData',
                             attributes: ['valueEn', 'valueVi'],
                         },
+                        {
+                            model: db.Doctor_Info,
+                            attributes: ['specialtyId'],
+                            include: [
+                                {
+                                    model: db.Specialty,
+                                    attributes: ['nameVi'],
+                                },
+                            ],
+                        },
                     ],
                 });
 
@@ -337,7 +344,8 @@ let postInfoDoctorService = (inputData) => {
                 !inputData.priceId ||
                 !inputData.provinceId ||
                 !inputData.paymentId ||
-                !inputData.specialtyId
+                !inputData.specialtyId ||
+                !inputData.clinicId
             ) {
                 resolve({
                     errCode: -1,
@@ -359,6 +367,7 @@ let postInfoDoctorService = (inputData) => {
                     nameClinic: inputData.nameClinic,
                     note: inputData.note,
                     specialtyId: +inputData.specialtyId,
+                    clinicId: +inputData.clinicId,
                 });
                 resolve({
                     errCode: 0,
@@ -462,7 +471,8 @@ let updateDetailInfoDoctorService = (inputData) => {
                 !inputData.provinceId ||
                 !inputData.paymentId ||
                 !inputData.nameClinic ||
-                !inputData.addressClinic
+                !inputData.addressClinic ||
+                !inputData.clinicId
             ) {
                 resolve({
                     errCode: -1,
@@ -494,6 +504,7 @@ let updateDetailInfoDoctorService = (inputData) => {
                         doctorInfo.nameClinic = inputData.nameClinic;
                         doctorInfo.note = inputData.note;
                         (doctorInfo.specialtyId = +inputData.specialtyId),
+                            (doctorInfo.clinicId = +inputData.clinicId),
                             await doctorInfo.save();
                     } else {
                         await db.Doctor_Info.create({
@@ -505,6 +516,7 @@ let updateDetailInfoDoctorService = (inputData) => {
                             nameClinic: inputData.nameClinic,
                             note: inputData.note,
                             specialtyId: +inputData.specialtyId,
+                            clinicId: +inputData.clinicId,
                         });
                     }
                 } else {

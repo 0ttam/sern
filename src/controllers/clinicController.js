@@ -1,10 +1,34 @@
-import { log } from 'console';
-import specialtyService from '../services/speciatlyService';
+import clinicService from '../services/clinicService';
 
-const postCreateNewSpecialty = async (req, res) => {
+const postCreateNewClinic = async (req, res) => {
     try {
-        let info = await specialtyService.handelPostCreateNewSpecialty(
-            req.body
+        let info = await clinicService.handleCreateNewClinic(req.body);
+        return res.status(200).json(info);
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server...',
+        });
+    }
+};
+const getClinicById = async (req, res) => {
+    try {
+        let info = await clinicService.handleGetClinicById(req.query.id);
+        return res.status(200).json(info);
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server...',
+        });
+    }
+};
+const getListDoctorByClinicProvinceId = async (req, res) => {
+    try {
+        let info = await clinicService.handleGetListDoctorByClinicProvinceId(
+            req.query.clinicId,
+            req.query.specialtyId
         );
         return res.status(200).json(info);
     } catch (error) {
@@ -15,9 +39,9 @@ const postCreateNewSpecialty = async (req, res) => {
         });
     }
 };
-const getSpecialtyById = async (req, res) => {
+const putEditClinicById = async (req, res) => {
     try {
-        let info = await specialtyService.handelGetSpecialtyById(req.query.id);
+        let info = await clinicService.handelEditClinicById(req.body);
         return res.status(200).json(info);
     } catch (error) {
         console.log(error);
@@ -27,9 +51,9 @@ const getSpecialtyById = async (req, res) => {
         });
     }
 };
-const putEditSpecialtyById = async (req, res) => {
+const handleDeleteClinic = async (req, res) => {
     try {
-        let info = await specialtyService.handelEditSpecialtyById(req.body);
+        let info = await clinicService.handleDeleteClinicById(req.query.id);
         return res.status(200).json(info);
     } catch (error) {
         console.log(error);
@@ -39,40 +63,11 @@ const putEditSpecialtyById = async (req, res) => {
         });
     }
 };
-const handleDeleteSpecialty = async (req, res) => {
-    try {
-        let info = await specialtyService.handelDeleteSpecialtyById(
-            req.query.id
-        );
-        return res.status(200).json(info);
-    } catch (error) {
-        console.log(error);
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: 'Error from server...',
-        });
-    }
-};
-const getListDoctorBySpecialtyAndDetailSpecialtyById = async (req, res) => {
-    try {
-        let info =
-            await specialtyService.handelGetListDoctorBySpecialtyAndDetailSpecialtyById(
-                req.query.specialtyId,
-                req.query.provinceId
-            );
-        return res.status(200).json(info);
-    } catch (error) {
-        console.log(error);
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: 'Error from server...',
-        });
-    }
-};
+
 module.exports = {
-    postCreateNewSpecialty,
-    getSpecialtyById,
-    putEditSpecialtyById,
-    handleDeleteSpecialty,
-    getListDoctorBySpecialtyAndDetailSpecialtyById,
+    postCreateNewClinic: postCreateNewClinic,
+    getClinicById: getClinicById,
+    getListDoctorByClinicProvinceId: getListDoctorByClinicProvinceId,
+    putEditClinicById: putEditClinicById,
+    handleDeleteClinic,
 };
