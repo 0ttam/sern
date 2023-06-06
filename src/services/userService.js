@@ -18,6 +18,7 @@ let handleUserLogin = (email, password) => {
                         'roleId',
                         'firstName',
                         'lastName',
+                        'id',
                     ],
                     raw: true,
                 });

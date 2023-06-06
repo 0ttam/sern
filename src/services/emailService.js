@@ -1,7 +1,7 @@
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 
-let senSimpleEmail = async (receivedData) => {
+let sendSimpleEmail = async (receivedData) => {
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
@@ -53,6 +53,36 @@ let renderBodyEmail = (receivedData) => {
                     <div>Đội ngũ Bookingcare trân trọng cảm ơn!</div> `;
     }
 };
+let sendInvoiceEmail = async (receivedData) => {
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: process.env.GMAIL_ACCOUNT, // generated ethereal user
+            pass: process.env.GMAIL_APP_PASSWORD, // generated ethereal password
+        },
+    });
+
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+        from: '"CSKH Booking Care 👻" <vtt10111011@gmail.com>', // sender address
+        to: receivedData.email, // list of receivers
+        subject:
+            receivedData.languages === 'en'
+                ? 'Information to book a medical appointment'
+                : 'Thông tin đặt lịch khám bệnh', // Subject line
+        html: '', // html body
+        attachments: {
+            // encoded string as an attachment
+            filename: 'text1.jpeg',
+            content: receivedData.image.split('base64,')[1],
+            encoding: 'base64',
+        },
+    });
+};
 module.exports = {
-    senSimpleEmail,
+    sendSimpleEmail,
+    sendInvoiceEmail,
 };

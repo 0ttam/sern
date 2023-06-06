@@ -81,13 +81,15 @@ let initAppRouter = (app) => {
         '/api/get-list-doctor-by-clinic-id',
         clinicController.getListDoctorByClinicProvinceId
     );
-    router.put(
-        '/api/edit-clinic-by-id',
-        clinicController.putEditClinicById
+    router.put('/api/edit-clinic-by-id', clinicController.putEditClinicById);
+    router.delete('/api/delete-clinic', clinicController.handleDeleteClinic);
+    router.get(
+        '/api/get-list-patient-by-doctor-time-type',
+        patientController.handleLoadListPatientByDoctorTime
     );
-    router.delete(
-        '/api/delete-clinic',
-        clinicController.handleDeleteClinic
+    router.post(
+        '/api/send-invoice-recipience',
+        patientController.postSendInvoiceAndRecipience
     );
 
     return app.use('/', router);

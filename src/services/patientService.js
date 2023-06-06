@@ -56,8 +56,8 @@ let handelBookAppointment = (data) => {
                 // Create a booking record
                 if (user && user[0]) {
                     let token = uuidv4();
-                    await db.Booking.findOrCreate({
-                        where: { patientId: user[0].id },
+                    let [patient, created] = await db.Booking.findOrCreate({
+                        where: { patientId: user[0].id, statusId: 'S2' },
                         defaults: {
                             statusId: 'S1',
                             doctorId: data.doctorId,
@@ -68,22 +68,36 @@ let handelBookAppointment = (data) => {
                             token: token,
                         },
                     });
-                    await emailServer.senSimpleEmail({
-                        email: data.email,
-                        firstName: data.firstName,
-                        lastName: data.lastName,
-                        firstNameDoctor: data.firstNameDoctor,
-                        lastNameDoctor: data.lastNameDoctor,
-                        timeDisplay: data.timeDisplay,
-                        dayDisplay: data.dayDisplay,
-                        languages: data.languages,
-                        linkRedirect: buildUrlEmail(data.doctorId, token),
-                    });
-                    resolve({
-                        data: user,
-                        errCode: 0,
-                        errMessage: 'Save info patient success!',
-                    });
+                    if (created === true) {
+                        await emailServer.sendSimpleEmail({
+                            email: data.email,
+                            firstName: data.firstName,
+                            lastName: data.lastName,
+                            firstNameDoctor: data.firstNameDoctor,
+                            lastNameDoctor: data.lastNameDoctor,
+                            timeDisplay: data.timeDisplay,
+                            dayDisplay: data.dayDisplay,
+                            languages: data.languages,
+                            linkRedirect: buildUrlEmail(data.doctorId, token),
+                        });
+                        resolve({
+                            data: user,
+                            errCode: 0,
+                            errMessageVi:
+                                'Đăng kí khám bệnh thành công. Vui lòng kiểm tra email!',
+                            errMessageEn:
+                                'Successful registration for medical examination. Please check your email!',
+                        });
+                    } else if (created === false) {
+                        resolve({
+                            data: user,
+                            errCode: 0,
+                            errMessageVi:
+                                'Thông tin đăng kí đã tồn tại. Vui lòng kiểm tra lại email!',
+                            errMessageEn:
+                                'Registration information already exists. Please check your email again!',
+                        });
+                    }
                 }
             }
         } catch (error) {
@@ -129,7 +143,101 @@ let handelVerifyBookAppointment = (data) => {
         }
     });
 };
+let handleLoadListPatientByDoctorTime = (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId || !date) {
+                resolve({ errCode: 1, errMessage: 'Missing parameter' });
+            } else {
+                let listPatient = await db.Booking.findAll({
+                    where: {
+                        doctorId: doctorId,
+                        date: date,
+                        statusId: 'S2',
+                    },
+                    include: [
+                        {
+                            model: db.User,
+                            as: 'patientData',
+                            attributes: { exclude: ['password', 'avatar'] },
+                            include: [
+                                {
+                                    model: db.Allcode,
+                                    as: 'genderData',
+                                    attributes: ['valueVi', 'valueEn'],
+                                },
+                            ],
+                        },
+                        {
+                            model: db.Allcode,
+                            as: 'timeTypeData',
+                            attributes: ['valueVi', 'valueEn'],
+                        },
+                    ],
+                    raw: false,
+                    nest: true,
+                });
+                if (listPatient) {
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'get list patient successfully!',
+                        data: listPatient,
+                    });
+                } else {
+                    resolve({
+                        errCode: 2,
+                        errMessage: 'The patient does not exist!',
+                    });
+                }
+            }
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+let handleSendInvoiceAndRecipience = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data) {
+                resolve({
+                    errCode: 1,
+                    errMessageVi: 'Thiếu tham số',
+                    errMessageEn: 'Missing parameter',
+                    errType: 'failed',
+                });
+            } else {
+                let patient = await db.Booking.findOne({
+                    where: { patientId: data.patientId, statusId: 'S2' },
+                    raw: false,
+                });
+
+                await emailServer.sendInvoiceEmail({
+                    email: data.patientEmail,
+                    image: data.attachImage,
+                    languages: data.languages,
+                });
+                if (patient) {
+                    patient.statusId = 'S3';
+                    await patient.save();
+                }
+                resolve({
+                    data: patient,
+                    errCode: 0,
+                    errType: 'success',
+                    errMessageVi:
+                        'Gửi hóa đơn/đơn thuốc cho khách hàng thành công!',
+                    errMessageEn:
+                        'Send invoice/recipience to customer successfully!',
+                });
+            }
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
 module.exports = {
     handelBookAppointment,
     handelVerifyBookAppointment,
+    handleLoadListPatientByDoctorTime,
+    handleSendInvoiceAndRecipience,
 };
