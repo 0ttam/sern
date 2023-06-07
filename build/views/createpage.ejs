@@ -1,0 +1,80 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <title>Create Data</title>
+</head>
+<body>
+    <div class="container">
+        <h4 class="col-lg-12">Create User</h4>
+        <form class="col-lg-6" action="/create-user" method="post">
+            <div class="form-group">
+              <label for="email">Email address:</label>
+              <input type="email" class="form-control" placeholder="Enter email" id="email" name="email">
+            </div>
+            <div class="form-group">
+              <label for="pwd">Password:</label>
+              <input type="password" class="form-control" placeholder="Enter password" id="pwd" name="password">
+            </div>
+            <div class="form-row">
+                <div class="form-group col-sm-3">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" class="form-control" placeholder="first Name..." id="firstName" name="firstName">
+                </div>
+                <div class="form-group col-sm-6">
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" class="form-control" placeholder="Enter last Name..." id="lastName" name="lastName">
+                </div>
+                <div class="form-group col-lg-3">
+                    <label for="gender">Gender:</label>
+                    <select class="form-control" id="gender" name="gender">
+                        <option selected>Choose.....</option>
+                        <option value="1">Male</option>
+                        <option value="0">Female</option>
+                        </select>
+                </div>
+            </div >
+            <div class="form-row">
+                <div class="form-group col-lg-8">
+                    <label for="phoneNumber">Phone number:</label>
+                    <input type="text" class="form-control" placeholder="Enter phone Number" id="phoneNumber" name="phoneNumber">
+                </div>
+                <div class="form-group col-lg-4">
+                    <label for="roleId">Role ID:</label>
+                    <select class="form-control" id="roleId" name="roleId">
+                        <option selected>Choose.....</option>
+                        <option value="R1">Admin</option>
+                        <option value="R2">Doctor</option>
+                        <option value="R3">Patient</option>
+                        </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <input type="text" class="form-control" placeholder="Enter address" id="address" name="address">
+            </div>
+            
+            <div class="form-group">
+                <label for="image">Image:</label>
+                <input type="text" class="form-control" placeholder="Enter link image" id="image" name="image">
+            </div>
+            
+            
+
+            
+            
+            
+            <button type="submit" class="btn btn-primary col-lg-12">Submit</button>
+          </form>
+    </div>
+</body>
+</html>
